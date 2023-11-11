@@ -1,7 +1,9 @@
 ﻿using DTO.DTO.Request.Category;
 using DTO.DTO.Response.Category;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repository.IRepository;
+using System.Data;
 
 namespace eStoreAPI.Controllers
 {
@@ -31,6 +33,7 @@ namespace eStoreAPI.Controllers
             return Ok(category);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult AddCategory(CategoryAddDTO categoryAddDTO)
         {
@@ -42,6 +45,7 @@ namespace eStoreAPI.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public IActionResult DeleteCategory(int id)
         {
@@ -54,6 +58,7 @@ namespace eStoreAPI.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public IActionResult UpdateCategory(int id, CategoryUpdateDTO categoryUpdateDTO)
         {

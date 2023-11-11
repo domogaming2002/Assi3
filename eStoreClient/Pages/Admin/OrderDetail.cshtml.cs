@@ -48,6 +48,8 @@ namespace eStoreClient.Pages.Admin
 
         public async Task OnPostCreate(int orderId, int productId, decimal unitPrice, int quantity, double discount)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
             OrderDetailAddDTO orderDetail = new OrderDetailAddDTO()
             {
                 OrderId = orderId,
@@ -76,6 +78,8 @@ namespace eStoreClient.Pages.Admin
 
         public async Task OnPostDelete(int deleteOrderId, int deleteProductId, int deleteQuantity)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
             HttpResponseMessage response = client.DeleteAsync(apiOrderDetail + "/deleteOrderDetail?orderId=" + deleteOrderId + "&productId=" + deleteProductId).Result;
             var check = response.IsSuccessStatusCode;
 

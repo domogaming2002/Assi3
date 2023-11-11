@@ -51,6 +51,8 @@ namespace eStoreClient.Pages.Admin
 
         public async Task OnPostCreate(int categoryId, string productName, double weight, decimal unitPrice, int unitInStock)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
             ProductAddDTO product = new ProductAddDTO()
             {
                 CategoryId = categoryId,
@@ -66,6 +68,8 @@ namespace eStoreClient.Pages.Admin
 
         public async Task OnPostDelete(int deleteProductId)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
             var response = client.DeleteAsync(apiProduct + "/" + deleteProductId).Result;
             var check = response.IsSuccessStatusCode;
             await GetData();
@@ -74,6 +78,8 @@ namespace eStoreClient.Pages.Admin
 
         public async Task OnPostUpdate(int updateCategoryId, string updateProductName, double updateWeight, decimal updateUnitPrice, int updateUnitInStock, int updateProductId)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
             ProductUpdateDTO product = new ProductUpdateDTO()
             {
                 ProductId = updateProductId,

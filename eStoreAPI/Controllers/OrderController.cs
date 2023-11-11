@@ -1,7 +1,9 @@
 ﻿using DTO.DTO.Request.Order;
 using DTO.DTO.Response.Order;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repository.IRepository;
+using System.Data;
 
 namespace eStoreAPI.Controllers
 {
@@ -30,14 +32,13 @@ namespace eStoreAPI.Controllers
             var order = orderRepository.GetOrderById(id);
             return Ok(order);
         }
-
         [HttpGet("OrderByMem/{id}")]
         public ActionResult<IEnumerable<OrderResponseDTO>> GetOrderByMemId(int id)
         {
             var order = orderRepository.GetOrderByMemId(id);
             return Ok(order);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult AddOrder(OrderAddDTO orderAddDTO)
         {
@@ -48,7 +49,7 @@ namespace eStoreAPI.Controllers
             var response = orderRepository.AddOrder(orderAddDTO);
             return Ok(response);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public IActionResult DeleteOrder(int id)
         {
@@ -60,7 +61,7 @@ namespace eStoreAPI.Controllers
             return Ok(response);
 
         }
-
+         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public IActionResult UpdateOrder(int id, OrderUpdateDTO orderUpdateDTO)
         {

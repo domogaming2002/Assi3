@@ -38,6 +38,8 @@ namespace eStoreClient.Pages
 
         public async Task OnPostCreate(string categoryName)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
             CategoryAddDTO category = new CategoryAddDTO()
             {
                CategoryName = categoryName
@@ -49,6 +51,8 @@ namespace eStoreClient.Pages
 
         public async Task OnPostDelete(int deleteCategoryId)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
             var response = client.DeleteAsync(apiCategory + "/" + deleteCategoryId).Result;
             var check = response.IsSuccessStatusCode;
             await GetData();
@@ -57,6 +61,8 @@ namespace eStoreClient.Pages
 
         public async Task OnPostUpdate(string updateCategoryName,int updateCategoryId)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
             CategoryUpdateDTO category = new CategoryUpdateDTO()
             {
                 CategoryId = updateCategoryId,

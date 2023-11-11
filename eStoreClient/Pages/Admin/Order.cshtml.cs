@@ -45,6 +45,8 @@ namespace eStoreClient.Pages.Admin
 
         public async Task OnPostCreate(int memberId, DateTime orderDate, DateTime requireDate, DateTime shippedDate)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
             OrderAddDTO order = new OrderAddDTO()
             {
                 MemberId = memberId,
@@ -61,6 +63,8 @@ namespace eStoreClient.Pages.Admin
 
         public async Task OnPostDelete(int deleteOrderId)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
             var response = client.DeleteAsync(apiOrder + "/" + deleteOrderId).Result;
             var check = response.IsSuccessStatusCode;
             await GetData();
@@ -69,6 +73,8 @@ namespace eStoreClient.Pages.Admin
 
         public async Task OnPostUpdate(int updateMemberId, DateTime updateOrderDate, DateTime updateRequireDate, DateTime updateShippedDate,int updateFreight ,int updateOrderId)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
             OrderUpdateDTO order = new OrderUpdateDTO()
             {
                 OrderId = updateOrderId,
