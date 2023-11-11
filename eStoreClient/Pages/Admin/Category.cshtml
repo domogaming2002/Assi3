@@ -1,0 +1,144 @@
+﻿@page
+@using DTO.DTO.Response.Category
+@model eStoreClient.Pages.CategoryModel
+@{
+    Layout = "_LayoutAdmin";
+}
+
+
+<!-- Button trigger modal create Category -->
+<button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+    Create Category
+</button>
+
+<!-- Modal Create Category -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Create" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Category</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Category Name</p>
+                    <input type="text" name="categoryName" class="w-100" />
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Table  Cateogry -->
+<div>
+    <table id="tablePagnation" class="table align-middle mb-0 bg-white">
+        <thead class="bg-light">
+            <tr>
+                <th>CategoryId</th>
+                <th>CategoryName</th>
+                <th>Delete</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (CategoryResponseDTO c in Model.listCategory)
+            {
+                <tr>
+                    <td>
+                        <p class="fw-normal mb-1">@c.CategoryId</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@c.CategoryName</p>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-sm btn-rounded"
+                            onclick="openPopupDelete('@c.CategoryId')">
+                            Delete
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-sm btn-rounded"
+                            onclick="openPopup('@c.CategoryId', '@c.CategoryName')">
+                            Update
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Delete Category -->
+<div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Delete" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete Category</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close" onclick="closePopup('deleteCategoryModal')"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="deleteCategoryId" type="hidden" name="deleteCategoryId" />
+                    <p> Bạn có chắc chắn muốn xóa Category này không ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePopup('deleteCategoryModal')">Cancle</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Modal Update Category -->
+<div class="modal fade" id="updateCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Update" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update Category</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close" onclick="closePopup('updateCategoryModal')"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Category Name</p>
+                    <input id="updateCategoryName" type="text" name="updateCategoryName" class="w-100" />
+                    <input id="updateCategoryId" type="hidden" name="updateCategoryId" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePopup('updateCategoryModal')">Close</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script -->
+<script>
+    $('#tablePagnation').DataTable({
+        "pagingType": "full_numbers" // "simple" option for 'Previous' and 'Next' buttons only
+    });
+
+    function openPopup(categoryId, categoryName) {
+        var catName = document.getElementById("updateCategoryName");
+        catName.value = categoryName;
+
+        var id = document.getElementById("updateCategoryId");
+        id.value = categoryId;
+        $('#updateCategoryModal').modal('show');
+    }
+
+    function openPopupDelete(categoryId) {
+        var inputId = document.getElementById("deleteCategoryId");
+        inputId.value = categoryId;
+        $('#deleteCategoryModal').modal('show');
+    }
+
+
+</script>

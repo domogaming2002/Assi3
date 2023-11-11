@@ -1,0 +1,28 @@
+﻿@page
+@model eStoreClient.Pages.User.ProfileModel
+@{
+    Layout = "_LayoutUser";
+}
+
+<form asp-page-handler="Update" method="post">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Create Member</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p>Email</p>
+            <input asp-for="@Model.member.Email" value="@Model.member.Email" name="email" type="text" class="w-100" />
+            <p>CompanyName</p>
+            <input asp-for="@Model.member.CompanyName" value="@Model.member.CompanyName" type="text" name="companyName" class="w-100" />
+            <p>City</p>
+            <input asp-for="@Model.member.City" value="@Model.member.City" type="text" name="city" class="w-100" />
+            <p>Country</p>
+            <input asp-for="@Model.member.Country" value="@Model.member.Country" type="text" name="country" class="w-100" />
+            <p>Password</p>
+            <input asp-for="@Model.member.Country" value="@Model.member.Country" type="text" name="password" class="w-100" />
+            <input asp-for="@Model.member.MemberId" value="@Model.member.MemberId" type="hidden" name="memberId" class="w-100" />
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </div>
+</form>

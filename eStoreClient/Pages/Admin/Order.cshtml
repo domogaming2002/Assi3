@@ -1,0 +1,204 @@
+﻿@page
+@using DTO.DTO.Response.Member
+@using DTO.DTO.Response.Order
+@model eStoreClient.Pages.Admin.OrderModel
+@{
+    Layout = "_LayoutAdmin";
+}
+
+
+<!-- Button trigger modal create Order -->
+<button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+    Create Order
+</button>
+
+<!-- Modal Create Order -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Create" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Order</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>MemberId</p>
+                    <select name="memberId" class="w-100">
+                        @foreach (MemberResponseDTO m in Model.listMember)
+                        {
+                            <option value="@m.MemberId">@m.Email</option>
+                        }
+                    </select>
+                    <p>Order Date</p>
+                    <input type="date" name="orderDate" class="w-100" />
+                    <p>Require Date</p>
+                    <input type="date" name="requireDate" class="w-100" />
+                    <p>ShippedDate</p>
+                    <input type="date" name="shippedDate" class="w-100" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Table  Product -->
+<div>
+    <table id="tablePagnation" class="table align-middle mb-0 bg-white">
+        <thead class="bg-light">
+            <tr>
+                <th>OrderId</th>
+                <th>Email</th>
+                <th>OrderDate</th>
+                <th>RequireDate</th>
+                <th>ShippedDate</th>
+                <th>Freight</th>
+                <th>Detail</th>
+                <th>Delete</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (OrderResponseDTO o in Model.listOrder)
+            {
+                <tr>
+                    <td>
+                        <p class="fw-normal mb-1">@o.OrderId</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@o.Member.Email</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@o.OrderDate</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@o.RequireDate</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@o.ShippedDate</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@o.Freight</p>
+                    </td>
+                    <td>
+                        <a asp-page="/Admin/OrderDetail" asp-route-orderId="@o.OrderId">View</a>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-sm btn-rounded"
+                            onclick="openPopupDelete('@o.OrderId')">
+                            Delete
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-sm btn-rounded"
+                            onclick="openPopup('@o.OrderId', '@o.MemberId', '@o.OrderDate', '@o.RequireDate', '@o.ShippedDate', '@o.Freight')">
+                            Update
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Modal Delete Order -->
+<div class="modal fade" id="deleteOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Delete" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete Order</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close" onclick="closePopup('deleteOrderModal')"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="deleteOrderId" type="hidden" name="deleteOrderId" />
+                    <p> Bạn có chắc chắn muốn xóa Order này không ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePopup('deleteOrderModal')">Cancle</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Modal Update Order -->
+<div class="modal fade" id="updateOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Update" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update Member</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close" onclick="closePopup('updateOrderModal')"></button>
+                </div>
+                <div class="modal-body">
+                    <p>MemberId</p>
+                    <select name="updateMemberId" id="updateMemberId" class="w-100">
+                        @foreach (MemberResponseDTO m in Model.listMember)
+                        {
+                            <option value="@m.MemberId">@m.Email</option>
+                        }
+                    </select>
+                    <p>Order Date</p>
+                    <input type="date" name="updateOrderDate" id="updateOrderDate" class="w-100" />
+                    <p>Require Date</p>
+                    <input type="date" name="updateRequireDate" id="updateRequireDate" class="w-100" />
+                    <p>ShippedDate</p>
+                    <input type="date" name="updateShippedDate" id="updateShippedDate" class="w-100" />
+                    <p>Freight</p>
+                    <input type="number" name="updateFreight" id="updateFreight" class="w-100" />
+                    <input id="updateOrderId" type="hidden" name="updateOrderId" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePopup('updateOrderModal')">Close</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script -->
+<script>
+    $('#tablePagnation').DataTable({
+        "pagingType": "full_numbers" // "simple" option for 'Previous' and 'Next' buttons only
+    });
+
+    function openPopup(orderId, memberId, orderDate, requireDate, shippedDate, freight) {
+        var mem = document.getElementById("updateMemberId");
+        for (var i = 0; i < mem.options.length; i++) {
+            if (mem.options[i].value == memberId) {
+
+                mem.options[i].selected = true;
+                break;
+            }
+        }
+
+        var oD = document.getElementById("updateOrderDate");
+        oD.value = formatDate(new Date(orderDate)) ;
+        var rD = document.getElementById("updateRequireDate");
+        rD.value = formatDate(new Date(requireDate));
+        var sD = document.getElementById("updateShippedDate");
+        sD.value = formatDate(new Date(shippedDate));
+        var f = document.getElementById("updateFreight");
+        f.value = freight;
+        var id = document.getElementById("updateOrderId");
+        id.value = orderId;
+
+        $('#updateOrderModal').modal('show');
+    }
+
+    function openPopupDelete(orderId) {
+        var inputId = document.getElementById("deleteOrderId");
+        inputId.value = orderId;
+        $('#deleteOrderModal').modal('show');
+    }
+
+
+</script>

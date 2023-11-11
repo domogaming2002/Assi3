@@ -1,0 +1,204 @@
+﻿@page
+@model eStoreClient.Pages.Admin.ProductModel
+@using DTO.DTO.Response.Category
+@using DTO.DTO.Response.Product
+@{
+    Layout = "_LayoutAdmin";
+}
+
+
+
+<!-- Button trigger modal create Product -->
+<button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+    Create Product
+</button>
+
+<!-- Modal Create Product -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Create" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Product</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>CategoryId</p>
+                    <select name="categoryId" class="w-100">
+                        @foreach(CategoryResponseDTO c in Model.listCategory)
+                        {
+                            <option value="@c.CategoryId">@c.CategoryName</option>
+                        }
+                    </select>
+                    <p>ProductName</p>
+                    <input type="text" name="productName" class="w-100" />
+                    <p>Weight</p>
+                    <input type="number" name="weight" class="w-100" />
+                    <p>UnitPrice</p>
+                    <input type="number" name="unitPrice" class="w-100" />
+                    <p>UnitInStock</p>
+                    <input type="number" name="unitInStock" class="w-100" />
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Table  Product -->
+<div>
+    <table id="tablePagnation" class="table align-middle mb-0 bg-white">
+        <thead class="bg-light">
+            <tr>
+                <th>ProductId</th>
+                <th>Category</th>
+                <th>ProductName</th>
+                <th>Weight</th>
+                <th>UnitPrice</th>
+                <th>UnitInStock</th>
+                <th>Delete</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ProductResponseDTO p in Model.listProduct)
+            {
+                <tr>
+                    <td>
+                        <p class="fw-normal mb-1">@p.ProductId</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@p.Category.CategoryName</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@p.ProductName</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@p.Weight</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@p.UnitPrice</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@p.UnitInStock</p>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-sm btn-rounded"
+                            onclick="openPopupDelete('@p.ProductId')">
+                            Delete
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-sm btn-rounded"
+                            onclick="openPopup('@p.ProductId', '@p.CategoryId', '@p.ProductName', '@p.Weight', '@p.UnitPrice', '@p.UnitInStock')">
+                            Update
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Delete Product -->
+<div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Delete" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close" onclick="closePopup('deleteProductModal')"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="deleteProductId" type="hidden" name="deleteProductId" />
+                    <p> Bạn có chắc chắn muốn xóa Product này không ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePopup('deleteProductModal')">Cancle</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Modal Update Product -->
+<div class="modal fade" id="updateProductModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Update" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update Member</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close" onclick="closePopup('updateProductModal')"></button>
+                </div>
+                <div class="modal-body">
+                     <p>CategoryId</p>
+                    <select name="updateCategoryId" id="updateCategoryId" class="w-100">
+                        @foreach (CategoryResponseDTO c in Model.listCategory)
+                        {
+                            <option value="@c.CategoryId">@c.CategoryName</option>
+                        }
+                    </select>
+                    <p>ProductName</p>
+                    <input type="text" name="updateProductName" id="updateProductName" class="w-100" />
+                    <p>Weight</p>
+                    <input type="number" name="updateWeight" id="updateWeight" class="w-100" />
+                    <p>UnitPrice</p>
+                    <input type="number" name="updateUnitPrice" id="updateUnitPrice" class="w-100" />
+                    <p>UnitInStock</p>
+                    <input type="number" name="updateUnitInStock" id="updateUnitInStock" class="w-100" />
+                    <input id="updateProductId" type="hidden" name="updateProductId" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePopup('updateProductModal')">Close</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Script -->
+<script>
+    $('#tablePagnation').DataTable({
+        "pagingType": "full_numbers" // "simple" option for 'Previous' and 'Next' buttons only
+    });
+    function openPopup(productId, categoryId, productName, weight, unitPrice, unitInStock,) {
+        var cate = document.getElementById("updateCategoryId");
+        for (var i = 0; i < cate.options.length; i++) {
+            if (cate.options[i].value == categoryId) {
+
+                cate.options[i].selected = true;
+                break;
+            }
+        }
+
+        var name = document.getElementById("updateProductName");
+        name.value = productName;
+        var weit = document.getElementById("updateWeight");
+        weit.value = weight;
+        var uP = document.getElementById("updateUnitPrice");
+        uP.value = unitPrice;
+        var uIS = document.getElementById("updateUnitInStock");
+        uIS.value = unitInStock;
+        var id = document.getElementById("updateProductId");
+        id.value = productId;
+
+        $('#updateProductModal').modal('show');
+    }
+
+    function openPopupDelete(productId) {
+        var inputId = document.getElementById("deleteProductId");
+        inputId.value = productId;
+        $('#deleteProductModal').modal('show');
+    }
+
+
+</script>

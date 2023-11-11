@@ -1,0 +1,185 @@
+﻿@page
+@using DTO.DTO.Response.Member
+@model eStoreClient.Pages.Admin.MemberModel
+@{
+    Layout = "_LayoutAdmin";
+}
+
+
+<!-- Button trigger modal create Semester -->
+<button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+    Create Member
+</button>
+
+<!-- Modal Create Member -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Create" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Member</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Email</p>
+                    <input type="text" name="email" class="w-100" />
+                    <p>CompanyName</p>
+                    <input type="text" name="companyName" class="w-100" />
+                    <p>City</p>
+                    <input type="text" name="city" class="w-100" />
+                    <p>Country</p>
+                    <input type="text" name="country" class="w-100" />
+                    <p>Password</p>
+                    <input type="text" name="password" class="w-100" />
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Table  Member -->
+<div>
+    <table id="tablePagnation" class="table align-middle mb-0 bg-white">
+        <thead class="bg-light">
+            <tr>
+                <th>MemberId</th>
+                <th>Email</th>
+                <th>CompanyName</th>
+                <th>City</th>
+                <th>Country</th>
+                <th>Password</th>
+                <th>Delete</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (MemberResponseDTO m in Model.listMember)
+            {
+                <tr>
+                    <td>
+                        <p class="fw-normal mb-1">@m.MemberId</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@m.Email</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@m.CompanyName</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@m.City</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@m.Country</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@m.Password</p>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-sm btn-rounded"
+                            onclick="openPopupDelete('@m.MemberId')">
+                            Delete
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-link btn-sm btn-rounded"
+                            onclick="openPopup('@m.MemberId', '@m.Email', '@m.CompanyName', '@m.City', '@m.Country', '@m.Password')">
+                            Update
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Modal Delete Member -->
+<div class="modal fade" id="deleteMemberModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Delete" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete Semester</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close" onclick="closePopup('deleteMemberModal')"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="deleteMemberId" type="hidden" name="deleteMemberId" />
+                    <p> Bạn có chắc chắn muốn xóa Member này không ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePopup('deleteMemberModal')">Cancle</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Update Class -->
+<div class="modal fade" id="updateMemberModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Update" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update Member</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close" onclick="closePopup('updateMemberModal')"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Email</p>
+                    <input id="updateEmail" type="text" name="updateEmail" class="w-100"
+                    <p>CompanyName</p>
+                    <input id="updateCompanyName" type="text" name="updateCompanyName" class="w-100" />
+                    <p>City</p>
+                    <input id="updateCity" type="text" name="updateCity" class="w-100" />
+                    <p>Country</p>
+                    <input id="updateCountry" type="text" name="updateCountry" class="w-100" />
+                    <p>Password</p>
+                    <input id="updatePassword" type="text" name="updatePassword" class="w-100" />
+                    <input id="updateMemberId" type="hidden" name="updateMemberId" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePopup('updateMemberModal')">Close</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Script -->
+<script>
+    $('#tablePagnation').DataTable({
+        "pagingType": "full_numbers" // "simple" option for 'Previous' and 'Next' buttons only
+    });
+    function openPopup(memberId, email, companyName, city, country, password) {
+        var emailId = document.getElementById("updateEmail");
+        emailId.value = email;
+        var companyNameId = document.getElementById("updateCompanyName");
+        companyNameId.value = companyName;
+        var cityId = document.getElementById("updateCity");
+        cityId.value = city;
+        var countryId = document.getElementById("updateCountry");
+        countryId.value = country;
+        var passwordId = document.getElementById("updatePassword");
+        passwordId.value = password;
+
+        var id = document.getElementById("updateMemberId");
+        id.value = memberId;
+
+        $('#updateMemberModal').modal('show');
+    }
+
+    function openPopupDelete(memberId) {
+        var inputId = document.getElementById("deleteMemberId");
+        inputId.value = memberId;
+        $('#deleteMemberModal').modal('show');
+    }
+
+
+</script>

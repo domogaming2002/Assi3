@@ -1,0 +1,161 @@
+﻿@page
+@using DTO.DTO.Response.OrderDetail
+@using DTO.DTO.Response.Product
+@model eStoreClient.Pages.Admin.OrderDetailModel
+@{
+    Layout = "_LayoutAdmin";
+}
+
+@if(Model.Notice != null){
+    <h2>@Model.Notice</h2>
+}
+
+<!-- Button trigger modal create Order Detail -->
+<button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+    Create Order Detail
+</button>
+
+<!-- Modal Create Order Detail -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Create" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Order Detail</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>ProductId</p>
+                    <select name="productId" class="w-100">
+                        @foreach (ProductResponseDTO m in Model.listProduct)
+                        {
+                            <option value="@m.ProductId">@m.ProductName - Unit in stock: @m.UnitInStock</option>
+                        }
+                    </select>
+                    <p>UnitPrice</p>
+                    <input type="number" name="unitPrice" class="w-100" />
+                    <p>Quantity</p>
+                    <input type="number" name="quantity" class="w-100" />
+                    <p>Discount</p>
+                    <input type="number" name="discount" class="w-100" />
+                    <input type="hidden" name="orderId" value="@Model.OrderId"  class="w-100" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Table  Product -->
+<div>
+    <table id="tablePagnation" class="table align-middle mb-0 bg-white">
+        <thead class="bg-light">
+            <tr>
+                <th>ProductId</th>
+                <th>UnitPrice</th>
+                <th>Quantity</th>
+                <th>Discount</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (OrderDetailResponseDTO o in Model.listOrderDetail)
+            {
+                <tr>
+                    <td>
+                        <p class="fw-normal mb-1">@o.Product.ProductName</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@o.UnitPrice</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@o.Quantity</p>
+                    </td>
+                    <td>
+                        <p class="fw-normal mb-1">@o.Discount</p>
+                    </td>
+                  
+                    <td>
+                        <button type="button" class="btn btn-link btn-sm btn-rounded"
+                            onclick="openPopupDelete('@o.OrderId', '@o.ProductId', '@o.Quantity')">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Delete Order Detail -->
+<div class="modal fade" id="deleteOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-page-handler="Delete" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete Order Detail</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close" onclick="closePopup('deleteOrderModal')"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="deleteOrderId" type="hidden" name="deleteOrderId" />
+                    <input id="deleteProductId" type="hidden" name="deleteProductId" />
+                    <input id="deleteQuantity" type="hidden" name="deleteQuantity" />
+                    <p> Bạn có chắc chắn muốn xóa Order này không ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePopup('deleteOrderModal')">Cancle</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script -->
+<script>
+    $('#tablePagnation').DataTable({
+        "pagingType": "full_numbers" // "simple" option for 'Previous' and 'Next' buttons only
+    });
+
+    function openPopup(orderId, memberId, orderDate, requireDate, shippedDate, freight) {
+        var mem = document.getElementById("updateMemberId");
+        for (var i = 0; i < mem.options.length; i++) {
+            if (mem.options[i].value == memberId) {
+
+                mem.options[i].selected = true;
+                break;
+            }
+        }
+
+        var oD = document.getElementById("updateOrderDate");
+        oD.value = formatDate(new Date(orderDate));
+        var rD = document.getElementById("updateRequireDate");
+        rD.value = formatDate(new Date(requireDate));
+        var sD = document.getElementById("updateShippedDate");
+        sD.value = formatDate(new Date(shippedDate));
+        var f = document.getElementById("updateFreight");
+        f.value = freight;
+        var id = document.getElementById("updateOrderId");
+        id.value = orderId;
+
+        $('#updateOrderModal').modal('show');
+    }
+
+    function openPopupDelete(orderId, productId, quantity) {
+        var inputId = document.getElementById("deleteOrderId");
+        inputId.value = orderId;
+
+        var pId = document.getElementById("deleteProductId");
+        pId.value = productId;
+
+        var quan = document.getElementById("deleteQuantity");
+        quan.value = quantity;
+        $('#deleteOrderModal').modal('show');
+    }
+
+
+</script>
