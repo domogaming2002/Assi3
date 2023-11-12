@@ -3,6 +3,7 @@ using eBookStore.Common;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 
 namespace eStoreClient.Pages.User
 {
@@ -24,8 +25,9 @@ namespace eStoreClient.Pages.User
 
         public async Task GetData()
         {
-            int id = Int32.Parse(HttpContext.Session.GetString("id"));
-            HttpResponseMessage response = await client.GetAsync(apiOrder + "/OrderByMem/" + id);
+            ClaimsPrincipal claimUser = HttpContext.User;
+            var id = claimUser.FindFirstValue(ClaimTypes.Sid);
+            HttpResponseMessage response = await client.GetAsync(apiOrder + "/OrderByMem/" + Int32.Parse(id));
             string strData = await response.Content.ReadAsStringAsync();
             listOrder = JsonConvert.DeserializeObject<List<OrderResponseDTO>>(strData);
         }

@@ -12,10 +12,12 @@ namespace eStoreAPI.Controllers
     public class OrderController : ControllerBase
     {
         IOrderRepository orderRepository;
+        IOrderDetailRepository orderDetailRepository;
 
-        public OrderController(IOrderRepository orderRepository)
+        public OrderController(IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository)
         {
             this.orderRepository = orderRepository;
+            this.orderDetailRepository = orderDetailRepository;
         }
 
         //Get: api/Product
@@ -61,7 +63,7 @@ namespace eStoreAPI.Controllers
             return Ok(response);
 
         }
-         [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public IActionResult UpdateOrder(int id, OrderUpdateDTO orderUpdateDTO)
         {
@@ -71,6 +73,19 @@ namespace eStoreAPI.Controllers
             }
             orderUpdateDTO.OrderId = id;
             var response = orderRepository.UpdateOrder(orderUpdateDTO);
+            return Ok(response);
+        }
+
+        [HttpPost("AddOrderList")]
+        public IActionResult AddOrder(OrderListAddDTO order)
+        {
+            var response = orderRepository.AddOrder(order);
+            var orderLastAdd = orderRepository.GetLastIndex();
+            foreach(var orderDetail in order.OrderDetails)
+            {
+                orderDetail.OrderId = orderLastAdd.OrderId;
+                var check = orderDetailRepository.AddOrderDetail(orderDetail);
+            }
             return Ok(response);
         }
     }

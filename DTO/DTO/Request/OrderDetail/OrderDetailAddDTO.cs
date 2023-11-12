@@ -8,10 +8,10 @@ namespace DTO.DTO.Request.OrderDetail
 {
     public class OrderDetailAddDTO
     {
-        public int OrderId { get; set; }
-        public int ProductId { get; set; }
-        public decimal UnitPrice { get; set; }
-        public int Quantity { get; set; }
-        public double? Discount { get; set; }
+        public int? OrderId { get; set; } = 0;   
+        public int? ProductId { get; set; } = 0;
+        public decimal? UnitPrice { get; set; } = 0;
+        public int? Quantity { get; set; } = 0; 
+        public double? Discount { get; set; } = 0;
     }
 }

@@ -23,6 +23,11 @@ namespace DataAccess
             return _context.Orders.Include(o => o.Member).FirstOrDefault(m => m.OrderId == orderId);
         }
 
+        public Order? GetLastIndex()
+        {
+            return _context.Orders.Include(o => o.Member).OrderBy(o => o.OrderId).LastOrDefault();
+        }
+
         public List<Order> GetByMemberId(int memId)
         {
             return _context.Orders.Include(o => o.Member).Where(m => m.MemberId == memId).ToList();
@@ -37,6 +42,7 @@ namespace DataAccess
         {
             try
             {
+                order.OrderDetails = null;
                 _context.Orders.Add(order);
                 _context.SaveChanges();
                 return true;

@@ -23,9 +23,19 @@ namespace Repository.Repository
             return _orderDAO.Create(_mapper.Map<Order>(o));
         }
 
+        public bool AddOrder(OrderListAddDTO o)
+        {
+            return _orderDAO.Create(_mapper.Map<Order>(o));
+        }
+
         public bool DeleteOrder(OrderUpdateDTO o)
         {
             return _orderDAO.Delete(_mapper.Map<Order>(o));
+        }
+
+        public OrderResponseDTO? GetLastIndex()
+        {
+            return _mapper.Map<OrderResponseDTO>(_orderDAO.GetLastIndex());
         }
 
         public OrderResponseDTO? GetOrderById(int id)

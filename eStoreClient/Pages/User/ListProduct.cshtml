@@ -1,0 +1,151 @@
+﻿@page
+@model eStoreClient.Pages.User.ListProductModel
+@{
+    Layout = "_LayoutUser";
+}
+<table id="display-table" t class="table align-middle mb-0 bg-white">
+    <thead class="bg-light">
+        <tr>
+            <th>ProductName</th>
+            <th>Weight</th>
+            <th>UnitPrice</th>
+            <th>UnitInStock</th>
+            <th>Action to Add to Cart</th>
+        </tr>
+    </thead>
+    <tbody id="search-result">
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    $(document).ready(() => {
+        const apiUrl = `http://localhost:5079/api/Product`;
+        callAjax(apiUrl, displayProductList);
+    });
+
+    $('#display-table').DataTable({
+        "pagingType": "full_numbers" // "simple" option for 'Previous' and 'Next' buttons only
+    });
+
+    function callAjax(apiUrl, successFunction) {
+        $.ajax({
+            type: "GET",
+            contentType: "application/json",
+            url: apiUrl,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            success: function (data) {
+                successFunction(data);
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr);
+            },
+        });
+    }
+
+    function displayProductList(data) {
+        document.querySelector("#display-table").style.display = "block";
+        $("#search-result").html(
+            data.map((item) => `<tr>
+                                        <td>${item.productName}</td>
+                                        <td>${item.weight}</td>
+                                        <td>${item.unitPrice}</td>
+                                        <td>${item.unitInStock}</td>
+                                        <td>
+                                                <button " onclick="addToCart('${item.productId}','${item.unitPrice}','${item.productName}')">Add to Cart</button>
+                                            <input type="number" id="quantity-${item.productId}" value="1" min="1" style="width: 50px;">
+                                            <button onclick="increaseQuantity('${item.productId}','${item.unitInStock}')">+</button>
+                                            <button onclick="decreaseQuantity('${item.productId}')">-</button>
+                                        </td>
+                                    </tr>`
+            ).join("")
+        );
+    }
+
+    function addToCart(productId, unitPrice, productName) {
+        // Kiểm tra nếu giỏ hàng đã tồn tại trong cookie
+        let cart = getCartFromCookie();
+
+        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+        let existingProduct = cart.find(item => item.productId === productId);
+
+        if (existingProduct) {
+            // Nếu sản phẩm đã tồn tại, tăng số lượng lên 1
+            existingProduct.quantity++;
+            existingProduct.unitPrice = existingProduct.quantity * unitPrice;
+        } else {
+            // Nếu sản phẩm chưa tồn tại, tạo một mục mới trong giỏ hàng
+            cart.push({
+                productId: productId,
+                productName: productName,
+                unitPrice: unitPrice,
+                quantity: 1
+            });
+        }
+
+        // Cập nhật giỏ hàng vào cookie
+        updateCartCookie(cart);
+    }
+
+    function getCartFromCookie() {
+        // Kiểm tra xem có cookie giỏ hàng không
+        let cartCookie = getCookie("cart");
+
+        if (cartCookie) {
+            // Nếu có, giải mã và trả về giỏ hàng
+            return JSON.parse(cartCookie);
+        } else {
+            // Nếu không, trả về một mảng rỗng
+            return [];
+        }
+    }
+
+    function updateCartCookie(cart) {
+        // Lưu giỏ hàng vào cookie
+        setCookie("cart", JSON.stringify(cart), 7); // 7 ngày lưu trữ cookie
+        console.log("Cart cookie:", document.cookie);
+    }
+
+    // Hàm lấy giá trị cookie
+    function getCookie(name) {
+        let value = "; " + document.cookie;
+        let parts = value.split("; " + name + "=");
+
+        if (parts.length === 2) {
+            return parts.pop().split(";").shift();
+        }
+    }
+
+    // Hàm thiết lập giá trị cookie
+    function setCookie(name, value, days) {
+        let expires = "";
+
+        if (days) {
+            let date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function increaseQuantity(productId, uIS) {
+        const quantityInput = document.querySelector(`#quantity-${productId}`);
+        let quantity = parseInt(quantityInput.value);
+        if (quantity < uIS) {
+            quantity++;
+            quantityInput.value = quantity;
+        }
+    }
+
+    function decreaseQuantity(productId) {
+        const quantityInput = document.querySelector(`#quantity-${productId}`);
+        let quantity = parseInt(quantityInput.value);
+        if (quantity > 1) {
+            quantity--;
+            quantityInput.value = quantity;
+        }
+    }
+</script>

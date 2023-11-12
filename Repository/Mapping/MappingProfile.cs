@@ -27,6 +27,7 @@ namespace Repository.Mapping
             CreateMap<Order, OrderResponseDTO>().ReverseMap();
             CreateMap<Order, OrderAddDTO>().ReverseMap();
             CreateMap<Order, OrderUpdateDTO>().ReverseMap();
+            CreateMap<Order, OrderListAddDTO>().ReverseMap();
             CreateMap<OrderDetail, OrderDetailResponseDTO>().ReverseMap();
             CreateMap<OrderDetail, OrderDetailAddDTO>().ReverseMap();
             CreateMap<OrderDetail, OrderDetailUpdateDTO>().ReverseMap();

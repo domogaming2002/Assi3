@@ -40,7 +40,7 @@ namespace ProjectPRN_FAP.Pages.Common
                 }
                 else if (test == "Customer")
                 {
-                    return RedirectToPage("/User/Profile");
+                    return RedirectToPage("/User/ListProduct");
                 }
             }
             return Page();

@@ -62,7 +62,7 @@
             {
                 <tr>
                     <td>
-                        <p class="fw-normal mb-1">@m.MemberId</p>
+                        <p class="fw-normal mb-1">@m.Id</p>
                     </td>
                     <td>
                         <p class="fw-normal mb-1">@m.Email</p>
@@ -81,13 +81,13 @@
                     </td>
                     <td>
                         <button type="button" class="btn btn-link btn-sm btn-rounded"
-                            onclick="openPopupDelete('@m.MemberId')">
+                            onclick="openPopupDelete('@m.Id')">
                             Delete
                         </button>
                     </td>
                     <td>
                         <button type="button" class="btn btn-link btn-sm btn-rounded"
-                            onclick="openPopup('@m.MemberId', '@m.Email', '@m.CompanyName', '@m.City', '@m.Country', '@m.Password')">
+                            onclick="openPopup('@m.Id', '@m.Email', '@m.CompanyName', '@m.City', '@m.Country', '@m.Password')">
                             Update
                         </button>
                     </td>

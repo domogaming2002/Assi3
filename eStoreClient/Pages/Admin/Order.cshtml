@@ -26,7 +26,7 @@
                     <select name="memberId" class="w-100">
                         @foreach (MemberResponseDTO m in Model.listMember)
                         {
-                            <option value="@m.MemberId">@m.Email</option>
+                            <option value="@m.Id">@m.Email</option>
                         }
                     </select>
                     <p>Order Date</p>
@@ -142,7 +142,7 @@
                     <select name="updateMemberId" id="updateMemberId" class="w-100">
                         @foreach (MemberResponseDTO m in Model.listMember)
                         {
-                            <option value="@m.MemberId">@m.Email</option>
+                            <option value="@m.Id">@m.Email</option>
                         }
                     </select>
                     <p>Order Date</p>

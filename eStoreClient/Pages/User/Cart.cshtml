@@ -1,0 +1,131 @@
+﻿@page
+@model eStoreClient.Pages.User.CartModel
+@{
+    Layout = "_LayoutUser";
+}
+<h1>Shopping Cart</h1>
+
+<div id="cart-items"></div>
+
+<table id="display-table" t class="table align-middle mb-0 bg-white">
+    <thead class="bg-light">
+        <tr>
+            <th>ProductId</th>
+            <th>ProductName</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Action to Add to Cart</th>
+        </tr>
+    </thead>
+    <tbody id="search-result">
+    </tbody>
+</table>
+<form asp-page-handler="Add">
+    <input type="hidden" name="cart" id="jsonValue" />
+    <button type="submit"> Take cart</button>
+</form>
+
+<script>
+    // Hiển thị giỏ hàng khi trang được tải
+    $(document).ready(function () {
+        displayCart();
+    });
+
+    // Hàm hiển thị giỏ hàng
+    function displayCart() {
+        // Kiểm tra nếu có cookie giỏ hàng
+
+        var cartCookie = getCookie("cart");
+        var cartItems = convertCartCookieToItems(cartCookie);
+        var name = document.getElementById("jsonValue");
+        name.value = cartCookie;
+        console.log(">>>", name.value);
+        $("#search-result").html(
+            cartItems.map((item) => `<tr>
+                                                    <td>${item.productId}</td>
+                                                    <td>${item.productName}</td>
+                                                    <td>${item.unitPrice}</td>
+                                                    <td>${item.quantity}</td>
+                                                       <td>
+                                                    <button onclick="removeFromCart('${item.productId}')">Remove</button>
+                                                </td>
+                                                </tr>`
+            ).join("")
+        );
+    }
+
+    function convertCartCookieToItems(cartCookie) {
+        // Get the value of the cart cookie
+        var cartCookie = getCookie("cart");
+
+        // Extract the cart items from the cookie
+        var cartItems = JSON.parse(cartCookie);
+        return cartItems;
+        // Display the cart items
+    }
+
+    function removeFromCart(productId) {
+        // Get the value of the cart cookie
+        var cartCookie = getCookie("cart");
+        var cartItems = convertCartCookieToItems(cartCookie);
+
+        // Find the index of the item with the specified productId
+        var index = cartItems.findIndex((item) => item.productId === productId);
+
+        if (index !== -1) {
+            // Remove the item from the cartItems array
+            cartItems.splice(index, 1);
+
+            // Convert the updated cartItems array back to a JSON string
+            var updatedCartCookie = JSON.stringify(cartItems);
+
+            // Update the cart cookie with the updated value
+            setCookie("cart", updatedCartCookie, 7); // Set the cookie for 7 days
+
+            // Refresh the cart display
+            displayCart();
+        }
+    }
+
+    // Helper function to set a cookie
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    // Helper function to get the value of a cookie
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    function takeCart() {
+        // Kiểm tra nếu có cookie giỏ hàng
+        var cartCookie = getCookie("cart");
+        var cartItems = convertCartCookieToItems(cartCookie);
+
+        // Gửi giá trị cartItems lên Razor Page bằng phương thức AJAX
+        $.ajax({
+            url: "/User/Cart",
+            type: "POST",
+            data: { cartItems: JSON.stringify(cartItems) },
+            success: function (response) {
+                // Xử lý phản hồi từ Razor Page (nếu cần)
+            },
+            error: function (xhr, status, error) {
+                // Xử lý lỗi (nếu có)
+            }
+        });
+    }
+</script>
